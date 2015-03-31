@@ -4,8 +4,10 @@
 # CodeSkulptor runs in Chrome 18+, Firefox 11+, and Safari 6+.
 # Some features may work in other browsers, but do not expect
 # full functionality.  It does NOT run in Internet Explorer.
-
-import simplegui
+try:
+    import simplegui
+except ImportError:
+    import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
 import random
 
 message = ""
@@ -44,8 +46,8 @@ def your_guess(your_value):
         return
     if (new_range(your_value) == True):
         message = "Perfect!"
-        if (timer.is_running()):
-            timer.stop()
+#        if (timer.is_running()):
+#            timer.stop()
     else:
         message = "Wrong! Try [" + str(min) + "," + str(max) + ")"
 
