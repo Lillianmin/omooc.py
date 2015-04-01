@@ -8,7 +8,31 @@ import math
 import re
 
 #init
-color_list=["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow","YellowGreen"]
+color_list=["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque",\
+            "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", \
+            "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", \
+            "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", \
+            "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", \
+            "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", \
+            "DarkSlateGray", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue",\
+            "DimGray", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", \
+            "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Green", "GreenYellow",\
+            "HoneyDew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", \
+            "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", \
+            "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGreen", "LightPink", \
+            "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", \
+            "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", \
+            "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", \
+            "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", \
+            "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", \
+            "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", \
+            "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", \
+            "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", \
+            "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", \
+            "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", \
+            "SlateBlue", "SlateGray", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", \
+            "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", \
+            "Yellow","YellowGreen"]
 shape_list=[]
 drag_pos_list=[]
 cur_shape="Circle"
@@ -34,25 +58,25 @@ def shape_square():
     global cur_shape
     cur_shape = "Square"
 
-#redo 
-def redo():
+#Next 
+def next():
     global cur_index, message
     if cur_index < len(shape_list):
-	cur_index += 1
-	if cur_index >= len(shape_list):
-	    message="Nothing to Redo"
+        cur_index+=1
+        if cur_index >= len(shape_list):
+            show_message("No Next")
     else:
-	message="Nothing to Redo"
+        show_message("No Next")
 
-#undo
-def undo():
+#Prev
+def prev():
     global cur_index,message
     if cur_index >= 0:
-	cur_index -= 1
-	if cur_index < 0:
-	    message="Nothing to Undo"
+        cur_index -= 1
+        if cur_index <0:
+            show_message("No Prev")
     else:
-	message="Nothing to Undo"
+        show_message("No Prev")
 
 #get square points list
 def get_square_points(x, y, length):
@@ -77,33 +101,34 @@ def color_rgb_reg(color):
 
 #draw 
 def draw(canvas):
+    global play_mode
     if( not play_mode):
         if(mouse_mode == "click"):
-    	    if ((cur_index >= 0) and (cur_index < len(shape_list))):
-	        cur_shape = shape_list[cur_index]
-	        draw_shape(canvas, cur_shape)
-            else:
-	        canvas.draw_text(message,[50,50],24,cur_color)
+            if ((cur_index >= 0) and (cur_index < len(shape_list))):
+                for cur_shape in shape_list[:cur_index+1]:
+                    draw_shape(canvas, cur_shape)
         elif(mouse_mode == "drag"):
             for pos in drag_pos_list:
-	        canvas.draw_point([pos[0], pos[1]], pos[2])
+                canvas.draw_point([pos[0], pos[1]], pos[2])
     else:
-    	if ((play_index >= 0) and (play_index <= cur_index)):
-            cur_shape = shape_list[play_index]
-	    draw_shape(canvas, cur_shape)
-        else:
-            canvas.draw_text(message,[50,50],34,cur_color)
+        if ((play_index >= 0) and (play_index <= cur_index)):
+            index = play_index
+            while index >= 0:
+                cur_shape = shape_list[index]
+                draw_shape(canvas, cur_shape)
+                index -= 1
+    canvas.draw_text(message,[50,50],24,cur_color)
 
 #draw shape
 def draw_shape(canvas, shape):
     if shape["shape"] == "Circle":
-	canvas.draw_circle([shape["x"], shape["y"]], 30, 2, shape["color"])
+        canvas.draw_circle([shape["x"], shape["y"]], 30, 2, shape["color"])
     elif shape["shape"] == "Triangle":
-	canvas.draw_polyline(get_triangle_points(shape["x"], shape["y"], 60), 2, shape["color"])
+        canvas.draw_polyline(get_triangle_points(shape["x"], shape["y"], 60), 2, shape["color"])
     elif shape["shape"] == "Square":
-	canvas.draw_polyline(get_square_points(shape["x"], shape["y"], 60), 2, shape["color"])
+        canvas.draw_polyline(get_square_points(shape["x"], shape["y"], 60), 2, shape["color"])
     else:
-	canvas.draw_point([shape["x"], shape["y"]], shape["color"])
+        canvas.draw_point([shape["x"], shape["y"]], shape["color"])
 
 #set color
 def set_color(color):
@@ -111,7 +136,7 @@ def set_color(color):
     if (color in color_list) or color_rgb_reg(color):
         cur_color = color
     else:
-        message = "Please Input Correct Color Name:" + str(color_list) + " or RGB like #ff0000/#FF0000"
+        show_message("Please Input Correct Color Name or RGB like #ff0000/#FF0000")
         color_input.set_text("")
 
 
@@ -132,44 +157,57 @@ def drag(pos):
 
 # set interval
 def set_interval(input_interval):
-    global interval,message
+    global interval,message,timer
     try:
-	interval = int(input_interval)
+        interval = int(input_interval)
+        timer = simplegui.create_timer(interval, timer_handler)
     except ValueError:
-        message = "Please Input a Integer for Interval!"
+        show_message("Please Input a Integer for Interval!")
         interval_input.set_text("")
 
 # play the draw 
 def play_stop():
-    global message,play_mode
-    if play_stop_btn.get_text() == "play":
+    global message,play_mode,play_index
+    if play_stop_btn.get_text() == "Play":
         play_mode=True
-        play_stop_btn.set_text("stop")
+        play_stop_btn.set_text("Stop")
+        play_index = len(shape_list)-2
         timer.start()
-    elif play_stop_btn.get_text() == "stop":
-        message = "Play Stoped by User"
-	play_end()
+    elif play_stop_btn.get_text() == "Stop":
+        show_message("Play Stoped by User")
+        play_end()
+        play_index = -1
 
 # play end
 def play_end():
-    global play_index, play_mode
-    play_stop_btn.set_text("play")
+    play_stop_btn.set_text("Play")
     timer.stop()
-    play_index=-1
-    play_mode=False
+    global play_mode
+    play_mode = False
 
 # timer ticker
 def timer_handler():
-    global play_index,message
-    if (play_index>=-1 and play_index < cur_index):
-	play_index += 1
+    global play_index
+    if (play_index >= 0 and play_index < len(shape_list)):
+        play_index -= 1
     else:
-	message = "Play End"
+        show_message("Play End")
         play_end()
-    
 
+# show messaage
+def show_message(msg):
+    global message
+    message = msg
+    message_timer.start()
+    
+# message timer handler
+def message_timer_handler():
+    global message
+    if message_timer.is_running():
+        message_timer.stop()
+    message = ""
 #create frame
-frame = simplegui.create_frame("Your Draw", 1200, 800)
+frame = simplegui.create_frame("Your Draw", 1000, 600)
 
 #set background white
 frame.set_canvas_background("White")
@@ -183,14 +221,14 @@ frame.add_button("Square", shape_square)
 color_input = frame.add_input("Set Color", set_color, 200);
 
 #add undo/redo button
-frame.add_button("Undo", undo)
-frame.add_button("Redo", redo)
+frame.add_button("Prev", prev)
+frame.add_button("Next", next)
 
 # add timer interval input
 interval_input = frame.add_input("Set Interval(ms)", set_interval, 200);
 
 #add play btn
-play_stop_btn = frame.add_button("play", play_stop)
+play_stop_btn = frame.add_button("Play", play_stop)
 
 #add mouse click and draw
 frame.set_draw_handler(draw)
@@ -199,6 +237,7 @@ frame.set_mousedrag_handler(drag)
 
 #create timer
 timer = simplegui.create_timer(interval, timer_handler)
+message_timer = simplegui.create_timer(1500, message_timer_handler)
 
 #start
 frame.start()
