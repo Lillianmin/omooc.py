@@ -1,4 +1,4 @@
-
+# Your Draw. You Can draw, your can play
 
 try:
     import simplegui
@@ -169,6 +169,7 @@ def set_color(color):
 
 #mouse click
 def mouse_click(pos):
+    global cur_color
     color_picker_index = get_color_picker_index(pos)
     if color_picker_index < 0 or color_picker_index >= COLOR_PICKER_ROW * COLOR_PICKER_COLUMN :
         shape={"x":pos[0], "y":pos[1], "shape":cur_shape, "color":cur_color}
@@ -178,7 +179,6 @@ def mouse_click(pos):
         messaage=""
         mouse_mode="click"
     else:
-        global cur_color
         cur_color = color_list[color_picker_index]
 
 def drag(pos):
