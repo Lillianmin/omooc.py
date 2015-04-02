@@ -143,7 +143,7 @@ def draw(canvas):
                 cur_shape = shape_list[index]
                 draw_shape(canvas, cur_shape)
                 index -= 1
-    canvas.draw_text(message,[50,50],24,cur_color)
+    canvas.draw_text(message,[50,50],24,"Red")
     draw_color_picker(canvas)
 
 #draw shape
@@ -153,7 +153,7 @@ def draw_shape(canvas, shape):
     elif shape["shape"] == "Triangle":
         canvas.draw_polygon(get_triangle_points(shape["x"], shape["y"], 60), 2, "Black", shape["color"])
     elif shape["shape"] == "Square":
-        canvas.draw_polyline(get_square_points(shape["x"], shape["y"], 60), 2, "Black", shape["color"])
+        canvas.draw_polygon(get_square_points(shape["x"], shape["y"], 60), 2, "Black", shape["color"])
     else:
         canvas.draw_point([shape["x"], shape["y"]], shape["color"])
 
@@ -189,6 +189,9 @@ def drag(pos):
 
 # set interval
 def set_interval(input_interval):
+    if play_mode:
+        show_message("Please don't Change Interval When Playing!")
+        return
     global interval,message,timer
     try:
         interval = int(input_interval)
@@ -203,7 +206,7 @@ def play_stop():
     if play_stop_btn.get_text() == "Play":
         play_mode=True
         play_stop_btn.set_text("Stop")
-        play_index = len(shape_list)-2
+        play_index = 0
         timer.start()
     elif play_stop_btn.get_text() == "Stop":
         show_message("Play Stoped by User")
@@ -220,8 +223,8 @@ def play_end():
 # timer ticker
 def timer_handler():
     global play_index
-    if (play_index >= 0 and play_index < len(shape_list)):
-        play_index -= 1
+    if (play_index >= 0 and play_index < (len(shape_list) - 1)):
+        play_index += 1
     else:
         show_message("Play End")
         play_end()
