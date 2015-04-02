@@ -8,6 +8,12 @@ import math
 import re
 
 #init
+FRAME_WIDTH  = 1000
+FRAME_HEIGHT = 600
+COLOR_PICKER_WIDTH = 20
+COLOR_PICKER_COLUMN = 2 
+COLOR_PICKER_ROW = FRAME_HEIGHT / COLOR_PICKER_WIDTH
+
 color_list=["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque",\
             "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", \
             "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", \
@@ -99,6 +105,26 @@ def get_triangle_points(x, y, length):
 def color_rgb_reg(color):
     return re.match(r'#[0-9a-f]{6}', color, re.IGNORECASE)
 
+#get picker points by index
+def get_picker_points(index):
+    column = index // COLOR_PICKER_ROW
+    row = index % COLOR_PICKER_ROW
+    pos = [COLOR_PICKER_WIDTH * column, COLOR_PICKER_WIDTH * row]
+    return get_square_points(pos[0], pos[1], COLOR_PICKER_WIDTH)
+
+#get color picker index
+def get_color_picker_index(pos):
+    column = pos[0] // COLOR_PICKER_WIDTH
+    row = pos[1] // COLOR_PICKER_WIDTH
+    index = column * COLOR_PICKER_ROW + row
+    return index
+
+#draw color picker
+def draw_color_picker(canvas):
+    for index in range(60):
+        canvas.draw_polygon(get_picker_points(index), 2, "Black", color_list[index])
+
+
 #draw 
 def draw(canvas):
     global play_mode
@@ -118,15 +144,16 @@ def draw(canvas):
                 draw_shape(canvas, cur_shape)
                 index -= 1
     canvas.draw_text(message,[50,50],24,cur_color)
+    draw_color_picker(canvas)
 
 #draw shape
 def draw_shape(canvas, shape):
     if shape["shape"] == "Circle":
-        canvas.draw_circle([shape["x"], shape["y"]], 30, 2, shape["color"])
+        canvas.draw_circle([shape["x"], shape["y"]], 30, 2, "Black", shape["color"])
     elif shape["shape"] == "Triangle":
-        canvas.draw_polyline(get_triangle_points(shape["x"], shape["y"], 60), 2, shape["color"])
+        canvas.draw_polygon(get_triangle_points(shape["x"], shape["y"], 60), 2, "Black", shape["color"])
     elif shape["shape"] == "Square":
-        canvas.draw_polyline(get_square_points(shape["x"], shape["y"], 60), 2, shape["color"])
+        canvas.draw_polyline(get_square_points(shape["x"], shape["y"], 60), 2, "Black", shape["color"])
     else:
         canvas.draw_point([shape["x"], shape["y"]], shape["color"])
 
@@ -142,12 +169,17 @@ def set_color(color):
 
 #mouse click
 def mouse_click(pos):
-    shape={"x":pos[0], "y":pos[1], "shape":cur_shape, "color":cur_color}
-    shape_list.append(shape)
-    global cur_index,message,mouse_mode
-    cur_index=len(shape_list) - 1
-    messaage=""
-    mouse_mode="click"
+    color_picker_index = get_color_picker_index(pos)
+    if color_picker_index < 0 or color_picker_index >= COLOR_PICKER_ROW * COLOR_PICKER_COLUMN :
+        shape={"x":pos[0], "y":pos[1], "shape":cur_shape, "color":cur_color}
+        shape_list.append(shape)
+        global cur_index,message,mouse_mode
+        cur_index=len(shape_list) - 1
+        messaage=""
+        mouse_mode="click"
+    else:
+        global cur_color
+        cur_color = color_list[color_picker_index]
 
 def drag(pos):
     special_pos=[pos[0], pos[1], cur_color]
@@ -207,7 +239,7 @@ def message_timer_handler():
         message_timer.stop()
     message = ""
 #create frame
-frame = simplegui.create_frame("Your Draw", 1000, 600)
+frame = simplegui.create_frame("Your Draw", FRAME_WIDTH, FRAME_HEIGHT)
 
 #set background white
 frame.set_canvas_background("White")
