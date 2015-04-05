@@ -1,11 +1,14 @@
 # Your Draw. You Can draw, your can play
 
+from Tkinter import *
 try:
     import simplegui
 except ImportError:
     import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
 import math
 import re
+import tkFileDialog
+import ast
 
 #init
 FRAME_WIDTH  = 1000
@@ -241,6 +244,31 @@ def message_timer_handler():
     if message_timer.is_running():
         message_timer.stop()
     message = ""
+    
+#save shape_list to file
+def save_draw():
+    save_file = tkFileDialog.asksaveasfile(mode='w')
+    save_file.write(str(shape_list))
+    save_file.flush()
+    save_file.close()
+    
+#open shape file and play
+def open_draw():
+    end = False
+    shape_str = ""
+    open_file = tkFileDialog.askopenfile(mode='r')
+    while not end:
+        read_str = open_file.readline(1024)
+        print(shape_str)
+        if not read_str:
+            end = True
+        else:
+            shape_str += read_str
+    open_file.close()
+    print shape_str
+    shape_list = ast.literal_eval(shape_str)
+    play_stop()
+    
 #create frame
 frame = simplegui.create_frame("Your Draw", FRAME_WIDTH, FRAME_HEIGHT)
 
@@ -273,6 +301,14 @@ frame.set_mousedrag_handler(drag)
 #create timer
 timer = simplegui.create_timer(interval, timer_handler)
 message_timer = simplegui.create_timer(1500, message_timer_handler)
+
+#add save and open button
+frame.add_button("Save", save_draw)
+frame.add_button("Open", open_draw)
+
+# avoid empty tk dialog
+root = Tk()
+root.withdraw()
 
 #start
 frame.start()

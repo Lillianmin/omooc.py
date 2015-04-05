@@ -1,5 +1,5 @@
 #Test file open, save, write, read
-
+from Tkinter import *
 import tkFileDialog
 import SimpleGUICS2Pygame.simpleguics2pygame as simplegui
 
@@ -20,7 +20,7 @@ def open_draw():
     open_file = tkFileDialog.askopenfile(mode='r')
     while not end:
         shape_str = open_file.readline(1024)
-        print shape_str
+        print(shape_str)
         if shape_str == "":
             end = True
         else:
@@ -30,5 +30,7 @@ def open_draw():
 frame = simplegui.create_frame("test", 1000, 600)
 frame.add_button("Save", save_draw)
 frame.add_button("Open", open_draw)
+root = Tk()
+root.withdraw()
 frame.start()
 
