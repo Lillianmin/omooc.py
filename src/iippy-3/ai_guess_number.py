@@ -23,19 +23,16 @@ class QuizSetter:
         self.max_value = max_value
         self.name = name
         self.value = random.randrange(min_value, max_value)
-        self.message = ""
+        self.msg_list = []
         
     def quiz(self):
-        self.message = self.name + ": Guess the Nubmer [" + str(self.min_value) + "," + str(self.max_value) + ")"
-        print self.message
+        self.msg_list.append(self.name + ": Guess the Nubmer [" + str(self.min_value) + "," + str(self.max_value) + ")")
         return [self.min_value, self.max_value];
 
     def judge(self, ai_guess, ai_name):
-        self.message = ai_name + ": Guess " + str(ai_guess)
-        print self.message
+        self.msg_list.append(ai_name + ": Guess " + str(ai_guess))
         if (ai_guess == self.value):
-            self.message = ai_name + ": Perfect!"
-            print self.message
+            self.msg_list.append(ai_name + ": Perfect!")
             return True
         else:
             if (ai_guess >= self.min_value and ai_guess < self.value):
@@ -70,7 +67,10 @@ class GuessNumberGame:
             ai_guess = self.ai.guess(quiz_range[0], quiz_range[1])
            
     def draw_text(self, canvas, pos, size, color):
-        canvas.draw_text(self.quiz.message, pos, size, color)
+        index = 0
+	for message in self.quiz.msg_list:
+            canvas.draw_text(message, [pos[0], pos[1] + index * 30], size, color)
+            index +=1
 
 
 # init game
@@ -79,10 +79,10 @@ game = GuessNumberGame("GameOne")
 # Handler to draw on canvas
 def draw(canvas):
     global game
-    game.draw_text(canvas, [50, 112], 24, "Red")
+    game.draw_text(canvas, [50, 50], 24, "Red")
 
 # Create a frame and assign callbacks to event handlers
-frame = simplegui.create_frame("AI Guess", 300, 200)
+frame = simplegui.create_frame("AI Guess", 1000, 800)
 frame.set_draw_handler(draw)
 
 # Game Start
