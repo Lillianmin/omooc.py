@@ -22,6 +22,8 @@ class Message:
 
 class QuizSetter:
     def __init__(self, min_value, max_value, name):
+        self.orig_min = min_value
+        self.orig_max = max_value
         self.min_value = min_value
         self.max_value = max_value
         self.name = name
@@ -29,7 +31,6 @@ class QuizSetter:
         self.msg_list = []
         
     def quiz(self):
-        
         self.msg_list.append(self.name + ": Guess the Nubmer [" + str(self.min_value) + "," + str(self.max_value) + ")")
         return [self.min_value, self.max_value];
 
@@ -44,6 +45,12 @@ class QuizSetter:
             elif (ai_guess > self.value and ai_guess < self.max_value):
                 self.max_value = ai_guess
             return False
+        
+    def restart(self):
+        self.min_value = self.orig_min
+        self.max_value = self.orig_max
+        self.msg_list = []
+        self.msg_list.append(self.name + " RePlay");
 
 class AIPlayer:
     def __init__(self, name):
@@ -57,6 +64,9 @@ class AIPlayer:
         else:
             self.ai_guess = ai_guess
         return self.ai_guess
+
+    def restart(self):
+        self.ai_guess = 0
 
 class GameHistory:
     def __init__(self, name):
@@ -78,10 +88,9 @@ class GameHistory:
         history = history_str.split('\n')
         if(len(history) != 3):
            return False
-        # TODO ERROR handler
-	try:
+        try:
             self.name = history[0]
-  	    self.quiz = ast.literal_eval(history[1])
+            self.quiz = ast.literal_eval(history[1])
             self.ai_guess = ast.literal_eval(history[2])
             return True
         except SyntaxError:
@@ -114,16 +123,64 @@ class GameHistory:
             self.msg_list.append(self.name + ": Guess " + str(self.ai_guess[i]))
             i += 1
         self.msg_list.append(self.name + ": Perfect!");
+
+    def restart(self):
+        self.quiz = []
+        self.ai_guess = []
+        self.msg_list = []
         
+class AICount:
+    def __init__(self):
+        self.file_name = "ai_count"
+        self.counts = []
+
+    def save_count(self, count):
+        save_file = file(self.file_name, mode='a')
+        save_file.write(str(count)+"\n")
+        save_file.flush()
+        save_file.close()
+        
+    def read_counts(self):
+        self.counts = []
+        open_file = file(self.file_name, mode='r')
+        end = False
+        counts_str = ""
+        while not end:
+            read_str = open_file.readline(1024)
+            if not read_str:
+                end = True
+            else:
+                counts_str += read_str
+        count_list = counts_str.split('\n')
+        try:
+            for count in count_list:
+                self.counts.append(int(count))
+            return True
+        except ValueError:
+            return False
+
+    def average_count(self):
+        total = 0
+        result = 0
+        for count in self.counts:
+            total += count
+        try:
+            result = float(total)/len(self.counts)
+        except ZeroDivisionError:
+            result = 0
+        return result
 
 class GuessNumberGame:
     def __init__(self, name):
+        self.name = name
         self.quiz = QuizSetter(0, 100, name)
         self.ai = AIPlayer(name)
         self.history = GameHistory(name)
+        self.count = AICount()
         self.play = False
+        self.msg = ""
 
-    def start(self):
+    def ai_game(self):
         quiz_range = self.quiz.quiz()
         self.history.add_quiz(quiz_range)
         ai_guess = self.ai.guess(quiz_range[0], quiz_range[1])
@@ -133,38 +190,71 @@ class GuessNumberGame:
             self.history.add_quiz(quiz_range)
             ai_guess = self.ai.guess(quiz_range[0], quiz_range[1])
             self.history.add_guess(ai_guess)
+        self.count.save_count(len(self.history.ai_guess))
+        if self.count.read_counts():
+            self.msg = "Read Count File Error!"
+        else:
+            counts = self.count.average_count()
+            self.msg = "Average Guess Counts: " + str(counts)
+            
+    def re_play(self):
+        self.quiz.restart()
+        self.ai.restart()
+        self.history.restart()
+        self.play = False
+        self.ai_game()
+
+    def start(self):
+        self.quiz = QuizSetter(0, 100, self.name)
+        self.ai = AIPlayer(self.name)
+        self.history = GameHistory(self.name)
+        self.play = False
+        self.ai_game()
            
     def draw_text(self, canvas, pos, size, color):
-	if self.play:
+        if self.play:
             index = 0
-   	    for message in self.history.msg_list:
+            for message in self.history.msg_list:
                 canvas.draw_text(message, [pos[0], pos[1] + index * 30], size, color)
                 index +=1
+            canvas.draw_text(self.msg, [pos[0], pos[1] + index * 30], size, color)
         else:
             index = 0
-   	    for message in self.quiz.msg_list:
+            for message in self.quiz.msg_list:
                 canvas.draw_text(message, [pos[0], pos[1] + index * 30], size, color)
                 index +=1
+            canvas.draw_text(self.msg, [pos[0], pos[1] + index * 30], size, color)
 
     def set_play(self, mode):
         self.play = mode
 
 # init game
 game = GuessNumberGame("GameOne")
+# start game
+def start_game():
+    game.start()
+    
+# re play
+def replay_game():
+    game.re_play()
+    
 # save game
 def save_game():
     game.set_play(False)
     save_file = tkFileDialog.asksaveasfile(mode='w')
-    game.history.save(save_file)
-    save_file.flush()
-    save_file.close()
+    if(save_file != None):
+        game.history.save(save_file)
+        save_file.flush()
+        save_file.close()
 
+# play game
 def play_game():
     game.set_play(True)
     open_file = tkFileDialog.askopenfile(mode='r')
-    game.history.play(open_file)
-    open_file.close()
-#    game.set_play(False)
+    if(open_file != None):
+        game.history.play(open_file)
+        open_file.close()
+#   game.set_play(False)
     
     
 # Handler to draw on canvas
@@ -175,11 +265,11 @@ def draw(canvas):
 frame = simplegui.create_frame("AI Guess", 1000, 800)
 frame.set_draw_handler(draw)
 
-# frame add save and play
+# frame start, add save and play
+frame.add_button("Start", start_game)
+frame.add_button("Re Play", replay_game)
 frame.add_button("Save", save_game)
 frame.add_button("Play", play_game)
-# Game Start
-game.start()
 
 root = Tk()
 root.withdraw()
